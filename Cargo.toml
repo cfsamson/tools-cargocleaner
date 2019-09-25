@@ -1,8 +1,19 @@
 [package]
 name = "cargocleaner"
-version = "0.1.0"
+version = "0.9.0"
 authors = ["Carl Fredrik Samson <cf@samson.no>"]
 edition = "2018"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/cfsamson/tools-cargocleaner"
+documentation = "https://github.com/cfsamson/tools-cargocleaner"
+homepage = "https://crates.io/crates/cargocleaner"
+description = """
+Runs cargo clean on all subdirectories
+"""
+keywords = ["tool", "cargo", "clean", "cache", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = ["/assets"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

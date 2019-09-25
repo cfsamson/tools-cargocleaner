@@ -1,13 +1,12 @@
-use std::{path, fs};
+use std::{fs, path};
 
 fn main() {
-    let current = std::env::current_dir().unwrap();
+    let current = std::env::current_dir().expect("Error reading base dir");
     walk_dirs(&current);
 }
 
-
 fn walk_dirs(cur_path: &path::Path) {
-    let entries = fs::read_dir(cur_path).unwrap();
+    let entries = fs::read_dir(cur_path).expect("Error reading current dir");
     for entry in entries {
         let entry: fs::DirEntry = match entry {
             Ok(entry) => entry,
@@ -30,14 +29,20 @@ fn walk_dirs(cur_path: &path::Path) {
 }
 
 fn clean(absolute_path: &path::Path) {
-    let canonical = absolute_path.canonicalize().unwrap();
+    let canonical = absolute_path
+        .canonicalize()
+        .expect("Error resolving an absolute path");
+
     let mut cmd = std::process::Command::new("cargo")
-    .current_dir(&canonical)
-    .arg("clean")
-    .spawn()
-    .expect("error executing command");
+        .current_dir(&canonical)
+        .arg("clean")
+        .spawn()
+        .expect("Error executing command");
 
     cmd.wait().expect("Error in child proccess");
 
-    println!("cleaned: {}", canonical.to_str().unwrap_or("ivalid dir name"));
+    println!(
+        "cleaned: {}",
+        canonical.to_str().unwrap_or("Invalid dir name")
+    );
 }

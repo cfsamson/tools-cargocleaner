@@ -25,11 +25,6 @@ Run `cargo install --path ./`.
 You should now be able to simply call `./cargocleaner` in a directory that 
 contains one or more Cargo projects and let it run.
 
-## Compatability
-
-Currently it only works on `macos` and presumably `linux` but it's trivial
-to make it work on Windows as well I just haven't needed it. Contributions welcome.
-
 ## Limitations
 
 Right now this is just a very simple tool but since we don't go through sub folders

@@ -28,12 +28,13 @@ contains one or more Cargo projects and let it run.
 ## Limitations
 
 Right now this is just a very simple tool but since we don't go through sub folders
-if we find a `Cargo.toml` in the root this might not work fully on `workspaces` or
-other places where you have several cargo crates nested.
+if we find a `Cargo.toml` in the root. This should work fine with `workspaces` but
+if for some reason you have a file called `Cargo.toml` which is not in the root of
+a crate it might not continue down any subdirectories.
 
 ## Tip
 
 This program will invoke commands on your system. `cargo clean` does delete files,
 but there is no logic in this code can delete anything besides what `cargo clean`
 does. The source is very short so look through it before running it on your system
-if youre in doubt.
+if you're in doubt.

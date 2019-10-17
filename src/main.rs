@@ -1,24 +1,38 @@
-use std::{fs, path, io::ErrorKind};
+use std::{fs, io::ErrorKind, path};
 
 fn main() -> Result<(), String> {
-    let current = std::env::current_dir().expect("Error reading base dir");
-    walk_dirs(&current)
+    let current =
+        std::env::current_dir().map_err(|_| format!("Error reading the base direactory"))?;
+    walk_dirs(&current)?;
+    Ok(())
 }
 
 fn walk_dirs(cur_path: &path::Path) -> Result<(), String> {
-    let entries = fs::read_dir(cur_path).expect("Error reading current dir");
+    // go through all files first to check if we're in a cargo root folder
+    let entries = fs::read_dir(cur_path)
+        .map_err(|_| format!("Error reading dir: {}", cur_path.to_string_lossy()))?;
+
     for entry in entries {
         let entry: fs::DirEntry = match entry {
             Ok(entry) => entry,
             Err(_) => continue,
         };
 
-        // go through all files first to check if we're in a cargo root folder
         if entry.file_name() == std::ffi::OsString::from("Cargo.toml") {
             return clean(cur_path);
         }
+    }
 
-        // if not the see if there are more folders to check
+    // if not the see if there are more folders to check
+    let entries = fs::read_dir(cur_path)
+        .map_err(|_| format!("Error reading dir: {}", cur_path.to_string_lossy()))?;
+
+    for entry in entries {
+        let entry: fs::DirEntry = match entry {
+            Ok(entry) => entry,
+            Err(_) => continue,
+        };
+
         if let Ok(meta) = entry.metadata() {
             if meta.is_dir() {
                 walk_dirs(&entry.path().as_path())?;
@@ -29,7 +43,7 @@ fn walk_dirs(cur_path: &path::Path) -> Result<(), String> {
 }
 
 fn clean(absolute_path: &path::Path) -> Result<(), String> {
-    let canonical = absolute_path
+        let canonical = absolute_path
         .canonicalize()
         .expect("Error resolving an absolute path");
 
@@ -50,7 +64,7 @@ fn clean(absolute_path: &path::Path) -> Result<(), String> {
 
     println!(
         "cleaned: {}",
-        canonical.to_str().unwrap_or("Invalid dir name")
+        absolute_path.to_str().unwrap_or("Invalid dir name")
     );
 
     Ok(())

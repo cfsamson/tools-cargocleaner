@@ -3,7 +3,7 @@ use std::{fs, io::ErrorKind, path};
 fn main() {
     match run() {
         Ok(..) => (),
-        Err(e) => println!("{}", e),
+        Err(e) => println!("Error: {}", e),
     };
 }
 

@@ -1,6 +1,6 @@
 [package]
 name = "cargocleaner"
-version = "0.9.3"
+version = "0.9.4"
 authors = ["Carl Fredrik Samson <cf@samson.no>"]
 edition = "2018"
 license = "MIT"

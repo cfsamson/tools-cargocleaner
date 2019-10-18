@@ -1,6 +1,13 @@
 use std::{fs, io::ErrorKind, path};
 
-fn main() -> Result<(), String> {
+fn main() {
+    match run() {
+        Ok(..) => (),
+        Err(e) => println!("{}", e),
+    };
+}
+
+fn run() -> Result<(), String> {
     let current =
         std::env::current_dir().map_err(|_| format!("Error reading the base direactory"))?;
     walk_dirs(&current)?;

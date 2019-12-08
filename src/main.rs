@@ -57,8 +57,8 @@ fn clean(absolute_path: &path::Path) -> Result<(), String> {
     let cmd_res = std::process::Command::new("cargo")
         .current_dir(&canonical)
         .arg("clean")
-        .spawn();
-    let mut cmd = match cmd_res {
+        .output();
+    let output = match cmd_res {
         Ok(cmd) => cmd,
         Err(ref e) if e.kind() == ErrorKind::NotFound => {
             let msg = format!(r#"Couldn't find "cargo". Make sure it's available."#);
@@ -67,7 +67,9 @@ fn clean(absolute_path: &path::Path) -> Result<(), String> {
         Err(e) => return Err(format!("Error executing \"cargo\" command. {}", e)),
     };
 
-    cmd.wait().expect("Error in child proccess");
+    if !output.status.success() {
+        return Err(String::from_utf8_lossy(&output.stderr).to_string());
+    }
 
     println!(
         "cleaned: {}",
@@ -75,4 +77,36 @@ fn clean(absolute_path: &path::Path) -> Result<(), String> {
     );
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use std::fs::File;
+
+    #[test]
+    fn doesnt_panic_on_invalid_toml() {
+        let invalid_toml = File::create("./test_cases/invalid_toml/Cargo.toml").unwrap();
+        let invalid = include_bytes!("../test_cases/invalid_toml/invalid.toml");
+        if let Err(_) = doesnt_panic_on_invalid_toml_helper(invalid_toml, invalid) {
+            if let Err(e) = std::fs::remove_file("./test_cases/invalid_toml/Cargo.toml") {
+                panic!("PLEASE MANUALLY REMOVE `test_cases/invalid_toml/Cargo.toml`\n{}", e);
+            }
+        }
+        
+    }
+
+    fn doesnt_panic_on_invalid_toml_helper(mut invalid_toml: File, invalid: &[u8]) -> Result<(), Box<dyn std::error::Error>> {
+        invalid_toml.write_all(invalid)?;
+        let path = std::path::Path::new("./test_cases/invalid_toml");
+        if let Err(e) = walk_dirs(path) {
+            println!("{}", e);
+        }
+        if let Err(e) = std::fs::remove_file("./test_cases/invalid_toml/Cargo.toml") {
+            panic!("PLEASE MANUALLY REMOVE `test_cases/invalid_toml/Cargo.toml`\n{}", e);
+        }
+        Ok(())
+    }
+    
 }

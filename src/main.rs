@@ -68,13 +68,16 @@ fn clean(absolute_path: &path::Path) -> Result<(), String> {
     };
 
     if !output.status.success() {
-        return Err(String::from_utf8_lossy(&output.stderr).to_string());
+        println!("Failed: {}", absolute_path.to_str().unwrap_or("Invalid dir name"));
+        println!("===== ERROR =====");
+        println!("{}", String::from_utf8_lossy(&output.stderr).to_string());
+        println!("=================")
+    } else {
+        println!(
+            "cleaned: {}",
+            absolute_path.to_str().unwrap_or("Invalid dir name")
+        );
     }
-
-    println!(
-        "cleaned: {}",
-        absolute_path.to_str().unwrap_or("Invalid dir name")
-    );
 
     Ok(())
 }

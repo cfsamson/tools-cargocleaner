@@ -17,6 +17,10 @@ folders it went from 20 GB to 800 MB.
 
 `cargo install cargocleaner`
 
+To update the program
+
+`cargo install --force cargocleaner`
+
 ### Manually
 
 Clone this repository.
